@@ -1,0 +1,8 @@
+git+https://github.com/Pycord-Development/Pycord
+requests
+aiohttp
+fastapi
+uvicorn
+jinja2
+pystyle
+python-multipart
