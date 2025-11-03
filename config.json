@@ -1,0 +1,33 @@
+{
+    "_comment_bot": "=== BOT CONFIGURATION ===",
+    "token": "",
+    "client_id": "2",
+    "client_secret": "",
+    "redirect_uri": "http://localhost:8000",
+    "scope": "identify%20guilds.join",
+    
+    "_comment_permissions": "=== PERMISSIONS ===",
+    "owners": [1375021759941574666],
+    "whitelist": [],
+    
+    "_comment_servers": "=== SERVER CONFIGURATION ===",
+    "admin_guild": 1434829035279614032,
+    
+    "_comment_logging": "=== LOGGING CONFIGURATION ===",
+    "log_channel": 1434830021314220092,
+    "webhook_url": "",
+    
+    "_comment_verification": "=== VERIFICATION SYSTEM ===",
+    "_verification_note": "Format: 'server_id': role_id - Bot's role must be HIGHER than verify role!",
+    "verify_guilds": {
+        "1434829035279614032": 1434829071732314262,
+        "9999999999": 8888888888
+    },
+    
+    "_comment_webserver": "=== WEB SERVER SETTINGS ===",
+    "server_host": "0.0.0.0",
+    "server_port": 8000,
+    "server_logging": true,
+    
+    "_comment_scopes": "Available scopes: identify, guilds.join (email, guilds, connections removed for privacy)"
+}
