@@ -134,6 +134,13 @@ async def update_data_file(user_id, refresh_token, access_token):
     except FileNotFoundError:
         data = {"users": {}}
 
+    # Check if user already exists by user_id
+    for rt, user_data in data["users"].items():
+        if user_data.get("id") == user_id:
+            # User already verified, don't add duplicate
+            return "already authed"
+    
+    # New user - add to data.json
     if refresh_token not in data["users"]:
         data["users"][refresh_token] = {"id": user_id, "at": access_token}
 
@@ -339,17 +346,25 @@ async def login(request: Request, endpoint: str, code: str = None):
                     
                     member = guild.get_member(int(user_id))
                     if member:
-                        try:
-                            await asyncio.sleep(0.5)  # Small delay to avoid race conditions
-                            await member.add_roles(role, reason="OAuth2 Verification")
+                        # Check if user already has the role
+                        if role in member.roles:
+                            embed.description = ":white_check_mark: Member is already verified."
+                        else:
+                            # Create an async task in the bot's event loop to add the role
+                            async def add_role_task():
+                                try:
+                                    await member.add_roles(role, reason="OAuth2 Verification")
+                                    Write.Print(f"[ + ] Successfully added role {role.name} to {member}", Colors.green)
+                                except discord.Forbidden:
+                                    Write.Print(f"[ ! ] Missing permissions to add role {role.name}", Colors.light_red)
+                                except discord.HTTPException as e:
+                                    Write.Print(f"[ ! ] HTTP Error adding role: {str(e)}", Colors.light_red)
+                                except Exception as e:
+                                    Write.Print(f"[ ! ] Error adding role: {str(e)}", Colors.light_red)
+                            
+                            # Schedule the task in bot's event loop
+                            bot.loop.create_task(add_role_task())
                             embed.description = ":white_check_mark: Member was successfully verified."
-                        except discord.Forbidden:
-                            embed.description = ":x: Missing permissions to add role."
-                        except discord.HTTPException as e:
-                            embed.description = f":x: HTTP Error adding role: {str(e)}"
-                        except Exception as e:
-                            embed.description = f":x: Error adding role: {str(e)}"
-                            Write.Print(f"Error adding role: {e}", Colors.light_red)
                     else:
                         embed.description = ":x: Member not found."
                 else:
